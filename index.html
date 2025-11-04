@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Teoría de Colas</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <h1 class="text-3xl font-bold">🔄 BoyaQueue</h1>
+      <p class="text-blue-100 mt-1">
+        Simulador Comparativo de Teoría de Colas
+      </p>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-4 py-8">
+
+    <!-- Controls Section -->
+    <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-4 text-gray-800">
+        ⚙️ Configuración de Modelos
+      </h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- Model Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tipo de Modelo
+          </label>
+          <select id="model-type" 
+                  class="w-full border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">-- Seleccionar Modelo --</option>
+            <option value="MM1">M/M/1 - Un servidor, capacidad infinita</option>
+            <option value="MMs">M/M/s - Múltiples servidores</option>
+            <option value="MMsK">M/M/s/K - Capacidad limitada</option>
+            <option value="MMsN">M/M/s/N - Población finita</option>
+          </select>
+        </div>
+
+        <!-- Lambda (arrival rate) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            λ (Tasa de Llegadas)
+          </label>
+          <input type="number" id="param-lambda" step="0.1" min="0.1" 
+                 placeholder="Ej: 2.5"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p class="text-xs text-gray-500 mt-1">
+            Clientes por unidad de tiempo
+          </p>
+        </div>
+
+        <!-- Mu (service rate) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            μ (Tasa de Servicio)
+          </label>
+          <input type="number" id="param-mu" step="0.1" min="0.1" 
+                 placeholder="Ej: 3.0"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p class="text-xs text-gray-500 mt-1">
+            Clientes atendidos por servidor por tiempo
+          </p>
+        </div>
+
+        <!-- Number of servers (for M/M/s models) -->
+        <div id="param-servers-container" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            s (Número de Servidores)
+          </label>
+          <input type="number" id="param-servers" min="1" value="2"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+
+        <!-- Capacity (for M/M/s/K) -->
+        <div id="param-capacity-container" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            K (Capacidad del Sistema)
+          </label>
+          <input type="number" id="param-capacity" min="1" value="10"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p class="text-xs text-gray-500 mt-1">
+            Máximo de clientes (en servicio + cola)
+          </p>
+        </div>
+
+        <!-- Population (for M/M/s/N) -->
+        <div id="param-population-container" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            N (Población Total)
+          </label>
+          <input type="number" id="param-population" min="1" value="20"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p class="text-xs text-gray-500 mt-1">
+            Número finito de clientes potenciales
+          </p>
+        </div>
+
+      </div>
+
+      <div class="mt-6 flex gap-3 flex-wrap">
+        <button id="add-model-btn"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold 
+                       px-6 py-2 rounded-lg transition duration-200
+                       flex items-center gap-2">
+          <span>➕</span> Agregar Modelo
+        </button>
+        <button id="reset-all-btn"
+                class="bg-red-600 hover:bg-red-700 text-white font-semibold 
+                       px-6 py-2 rounded-lg transition duration-200
+                       flex items-center gap-2">
+          <span>🗑️</span> Limpiar Todo
+        </button>
+        <span class="text-sm text-gray-500 self-center">
+          (Máximo 4 modelos simultáneos)
+        </span>
+      </div>
+    </section>
+
+    <!-- Added Models Display -->
+    <section id="models-section" class="mb-8 hidden">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">
+          📋 Modelos Configurados
+        </h3>
+        <div id="models-list" class="space-y-3">
+          <!-- Dynamic model cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Simulation Controls -->
+    <section id="simulation-controls" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+      <h3 class="text-xl font-bold mb-4 text-gray-800">
+        ▶️ Control de Simulación
+      </h3>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Duración de Simulación
+          </label>
+          <input type="number" id="simulation-duration" value="100" min="10"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          <p class="text-xs text-gray-500 mt-1">Unidades de tiempo</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Velocidad de Animación
+          </label>
+          <select id="simulation-speed"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            <option value="0.5">0.5x (Lento)</option>
+            <option value="1" selected>1x (Normal)</option>
+            <option value="2">2x (Rápido)</option>
+            <option value="5">5x (Muy Rápido)</option>
+            <option value="100">Sin animación</option>
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button id="run-simulation-btn"
+                  class="w-full bg-green-600 hover:bg-green-700 text-white 
+                         font-semibold px-6 py-2 rounded-lg transition duration-200">
+            ▶️ Ejecutar Simulación
+          </button>
+        </div>
+      </div>
+
+      <div id="simulation-progress" class="hidden">
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div id="progress-bar" 
+               class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+               style="width: 0%"></div>
+        </div>
+        <p class="text-sm text-gray-600 mt-2 text-center">
+          Simulando... <span id="progress-text">0%</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Animation Containers -->
+    <section id="animation-section" class="mb-8 hidden">
+      <h2 class="text-2xl font-bold mb-4 text-gray-800">
+        🎬 Visualización en Tiempo Real
+      </h2>
+      <div id="animators-container" class="grid md:grid-cols-2 gap-6">
+        <!-- Dynamic animator containers -->
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="hidden">
+
+      <!-- Comparison Table -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-gray-800">
+            📊 Comparación de Resultados
+          </h2>
+          <div class="flex gap-2">
+            <button id="export-csv"
+                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
+                           px-4 py-2 rounded transition">
+              📄 Exportar CSV
+            </button>
+            <button id="export-json"
+                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
+                           px-4 py-2 rounded transition">
+              📋 Exportar JSON
+            </button>
+            <button id="copy-table"
+                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
+                           px-4 py-2 rounded transition">
+              📑 Copiar Tabla
+            </button>
+          </div>
+        </div>
+        <div id="comparison-table-container">
+          <!-- Comparison table renders here -->
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          📈 Gráficas Comparativas
+        </h2>
+        <div id="charts-container">
+          <!-- Charts render here -->
+        </div>
+      </div>
+
+      <!-- Conclusions Generator -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          💡 Análisis y Conclusiones
+        </h2>
+        <div id="conclusions-container" class="space-y-4">
+          <!-- Auto-generated conclusions -->
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-sm">
+        BoyaQueue MVP v1.0 | Proyecto Final - Investigación de Operaciones
+      </p>
+      <p class="text-xs text-gray-400 mt-2">
+        Desarrollado para análisis comparativo de sistemas de colas
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/core/RandomGenerators.js"></script>
+  <script src="js/core/PriorityQueue.js"></script>
+  <script src="js/core/MetricsCalculator.js"></script>
+  <script src="js/core/SimulationEngine.js"></script>
+
+  <script src="js/models/QueueModel.js"></script>
+  <script src="js/models/MM1.js"></script>
+  <script src="js/models/MMs.js"></script>
+  <script src="js/models/MMsK.js"></script>
+  <script src="js/models/MMsN.js"></script>
+
+  <script src="js/ui/QueueAnimator.js"></script>
+  <script src="js/ui/ComparisonTable.js"></script>
+  <script src="js/ui/ChartManager.js"></script>
+  <script src="js/ui/ConclusionsGenerator.js"></script>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
