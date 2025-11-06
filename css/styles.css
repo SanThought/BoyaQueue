@@ -1,5 +1,56 @@
 /* css/styles.css */
 
+/* Boyacá Color Palette - CSS Custom Properties */
+:root {
+  --clay-terracotta: #C2794D;
+  --clay-deep: #8B5A3C;
+  --fique-beige: #E8D5C4;
+  --fique-straw: #D4C5A9;
+  --boyaca-green: #5A7F5F;
+  --mountain-green: #748B75;
+  --earth-brown: #6B4423;
+  --warm-sand: #C9B896;
+  --light-cream: #F5F0E8;
+  --error-red: #B85450;
+  --text-primary: #3A2415;
+  --text-secondary: #6B5A47;
+}
+
+/* Enhanced hover lift for cards - GPU accelerated */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px) translateZ(0);
+  box-shadow: 0 8px 20px rgba(59, 37, 21, 0.15);
+}
+
+/* Button hover animations - GPU accelerated */
+.btn-primary {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 37, 21, 0.1);
+  will-change: transform;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 12px rgba(194, 121, 77, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0) translateZ(0);
+  box-shadow: 0 2px 4px rgba(59, 37, 21, 0.1);
+}
+
+.btn-primary:disabled {
+  transform: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Custom animations */
 @keyframes pulse-slow {
     0%, 100% {
@@ -35,7 +86,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  /* Progress bar animation */
+  /* Progress bar animation - Boyacá colors */
   @keyframes shimmer {
     0% {
       background-position: -1000px 0;
@@ -48,17 +99,17 @@
   #progress-bar {
     background: linear-gradient(
       90deg,
-      #2563eb 0%,
-      #3b82f6 50%,
-      #2563eb 100%
+      var(--clay-terracotta) 0%,
+      var(--clay-deep) 50%,
+      var(--clay-terracotta) 100%
     );
     background-size: 1000px 100%;
     animation: shimmer 2s infinite linear;
   }
   
-  /* Table highlighting */
+  /* Table highlighting - Boyacá fique beige */
   .comparison-table tr:hover {
-    background-color: rgba(59, 130, 246, 0.05);
+    background-color: rgba(232, 213, 196, 0.3);
   }
   
   /* Metric cards */
@@ -103,10 +154,10 @@
     }
   }
   
-  /* Loading spinner */
+  /* Loading spinner - Boyacá clay color */
   .spinner {
     border: 3px solid rgba(0, 0, 0, 0.1);
-    border-top: 3px solid #3b82f6;
+    border-top: 3px solid var(--clay-terracotta);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -144,21 +195,21 @@
     opacity: 1;
   }
   
-  /* Scrollbar styling */
+  /* Scrollbar styling - Boyacá earth tones */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--fique-beige);
   }
   
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: var(--earth-brown);
     border-radius: 4px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--clay-deep);
   }

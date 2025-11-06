@@ -7,19 +7,40 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Custom Config - Boyacá Color Palette -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'clay': '#C2794D',
+            'clay-dark': '#8B5A3C',
+            'fique': '#E8D5C4',
+            'fique-straw': '#D4C5A9',
+            'boyaca-green': '#5A7F5F',
+            'mountain-green': '#748B75',
+            'earth-brown': '#6B4423',
+            'warm-sand': '#C9B896',
+            'cream': '#F5F0E8',
+          }
+        }
+      }
+    }
+  </script>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-[#F5F0E8]">
 
   <!-- Header -->
-  <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+  <header class="bg-gradient-to-r from-[#C2794D] to-[#8B5A3C] text-white shadow-lg">
     <div class="container mx-auto px-4 py-6">
       <h1 class="text-3xl font-bold">🔄 BoyaQueue</h1>
-      <p class="text-blue-100 mt-1">
+      <p class="text-[#F5F0E8] opacity-90 mt-1">
         Simulador Comparativo de Teoría de Colas
       </p>
     </div>
@@ -28,7 +49,7 @@
   <div class="container mx-auto px-4 py-8">
 
     <!-- Controls Section -->
-    <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <section class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
       <h2 class="text-2xl font-bold mb-4 text-gray-800">
         ⚙️ Configuración de Modelos
       </h2>
@@ -42,7 +63,7 @@
           </label>
           <select id="model-type" 
                   class="w-full border border-gray-300 rounded-lg px-4 py-2
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                         focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
             <option value="">-- Seleccionar Modelo --</option>
             <option value="MM1">M/M/1 - Un servidor, capacidad infinita</option>
             <option value="MMs">M/M/s - Múltiples servidores</option>
@@ -59,7 +80,7 @@
           <input type="number" id="param-lambda" step="0.1" min="0.1" 
                  placeholder="Ej: 2.5"
                  class="w-full border border-gray-300 rounded-lg px-4 py-2
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
           <p class="text-xs text-gray-500 mt-1">
             Clientes por unidad de tiempo
           </p>
@@ -73,7 +94,7 @@
           <input type="number" id="param-mu" step="0.1" min="0.1" 
                  placeholder="Ej: 3.0"
                  class="w-full border border-gray-300 rounded-lg px-4 py-2
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
           <p class="text-xs text-gray-500 mt-1">
             Clientes atendidos por servidor por tiempo
           </p>
@@ -86,7 +107,7 @@
           </label>
           <input type="number" id="param-servers" min="1" value="2"
                  class="w-full border border-gray-300 rounded-lg px-4 py-2
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
         </div>
 
         <!-- Capacity (for M/M/s/K) -->
@@ -96,7 +117,7 @@
           </label>
           <input type="number" id="param-capacity" min="1" value="10"
                  class="w-full border border-gray-300 rounded-lg px-4 py-2
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
           <p class="text-xs text-gray-500 mt-1">
             Máximo de clientes (en servicio + cola)
           </p>
@@ -109,7 +130,7 @@
           </label>
           <input type="number" id="param-population" min="1" value="20"
                  class="w-full border border-gray-300 rounded-lg px-4 py-2
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
           <p class="text-xs text-gray-500 mt-1">
             Número finito de clientes potenciales
           </p>
@@ -119,14 +140,14 @@
 
       <div class="mt-6 flex gap-3 flex-wrap">
         <button id="add-model-btn"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold 
-                       px-6 py-2 rounded-lg transition duration-200
+                class="bg-[#C2794D] hover:bg-[#8B5A3C] text-white font-semibold 
+                       px-6 py-2 rounded-lg btn-primary
                        flex items-center gap-2">
           <span>➕</span> Agregar Modelo
         </button>
         <button id="reset-all-btn"
-                class="bg-red-600 hover:bg-red-700 text-white font-semibold 
-                       px-6 py-2 rounded-lg transition duration-200
+                class="bg-[#B85450] hover:bg-[#9A3F3C] text-white font-semibold 
+                       px-6 py-2 rounded-lg btn-primary
                        flex items-center gap-2">
           <span>🗑️</span> Limpiar Todo
         </button>
@@ -138,7 +159,7 @@
 
     <!-- Added Models Display -->
     <section id="models-section" class="mb-8 hidden">
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 card-lift">
         <h3 class="text-xl font-bold mb-4 text-gray-800">
           📋 Modelos Configurados
         </h3>
@@ -149,7 +170,7 @@
     </section>
 
     <!-- Simulation Controls -->
-    <section id="simulation-controls" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+    <section id="simulation-controls" class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift hidden">
       <h3 class="text-xl font-bold mb-4 text-gray-800">
         ▶️ Control de Simulación
       </h3>
@@ -160,7 +181,8 @@
             Duración de Simulación
           </label>
           <input type="number" id="simulation-duration" value="100" min="10"
-                 class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
           <p class="text-xs text-gray-500 mt-1">Unidades de tiempo</p>
         </div>
 
@@ -169,7 +191,8 @@
             Velocidad de Animación
           </label>
           <select id="simulation-speed"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                  class="w-full border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-[#C2794D] focus:border-transparent">
             <option value="0.5">0.5x (Lento)</option>
             <option value="1" selected>1x (Normal)</option>
             <option value="2">2x (Rápido)</option>
@@ -180,8 +203,8 @@
 
         <div class="flex items-end">
           <button id="run-simulation-btn"
-                  class="w-full bg-green-600 hover:bg-green-700 text-white 
-                         font-semibold px-6 py-2 rounded-lg transition duration-200">
+                  class="w-full bg-[#5A7F5F] hover:bg-[#748B75] text-white 
+                         font-semibold px-6 py-2 rounded-lg btn-primary">
             ▶️ Ejecutar Simulación
           </button>
         </div>
@@ -213,25 +236,25 @@
     <section id="results-section" class="hidden">
 
       <!-- Comparison Table -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-bold text-gray-800">
             📊 Comparación de Resultados
           </h2>
           <div class="flex gap-2">
             <button id="export-csv"
-                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
-                           px-4 py-2 rounded transition">
+                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                           px-4 py-2 rounded btn-primary">
               📄 Exportar CSV
             </button>
             <button id="export-json"
-                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
-                           px-4 py-2 rounded transition">
+                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                           px-4 py-2 rounded btn-primary">
               📋 Exportar JSON
             </button>
             <button id="copy-table"
-                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm 
-                           px-4 py-2 rounded transition">
+                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                           px-4 py-2 rounded btn-primary">
               📑 Copiar Tabla
             </button>
           </div>
@@ -242,7 +265,7 @@
       </div>
 
       <!-- Charts -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
         <h2 class="text-2xl font-bold mb-4 text-gray-800">
           📈 Gráficas Comparativas
         </h2>
@@ -252,7 +275,7 @@
       </div>
 
       <!-- Conclusions Generator -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 card-lift">
         <h2 class="text-2xl font-bold mb-4 text-gray-800">
           💡 Análisis y Conclusiones
         </h2>
