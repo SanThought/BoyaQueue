@@ -1,6 +1,8 @@
 // models/MM1K.js - M/M/1/K Implementation
 // Single server with finite capacity (blocking system)
 
+console.log('MM1K.js loaded');
+
 class MM1KModel extends QueueModel {
   constructor(params) {
     super('M/M/1/K', params);
@@ -74,4 +76,3 @@ class MM1KModel extends QueueModel {
     this.scheduleEvent('departure', time + serviceTime, { customer });
   }
 }
-

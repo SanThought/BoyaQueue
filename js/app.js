@@ -20,15 +20,19 @@ class BoyaqueueApp {
       this.updateModelsSection();
     }
   
-    registerModels() {
-      this.availableModels = {
-        'MM1': MM1Model,
-        'MM1K': MM1KModel,
-        'MMs': MMsModel,
-        'MMsK': MMsKModel,
-        'MMsN': MMsNModel
-      };
-    }
+  registerModels() {
+    this.availableModels = {
+      'MM1': MM1Model,
+      'MM1K': MM1KModel,
+      'MMs': MMsModel,
+      'MMsK': MMsKModel,
+      'MMsN': MMsNModel
+    };
+    
+    // Debug: Verify all models are defined
+    console.log('Models registered:', Object.keys(this.availableModels));
+    console.log('MM1KModel defined:', typeof MM1KModel !== 'undefined');
+  }
   
     attachEventListeners() {
       // Model type selector
@@ -122,12 +126,15 @@ class BoyaqueueApp {
       this.addModel(modelType, params);
     }
   
-    addModel(modelType, params) {
-      const ModelClass = this.availableModels[modelType];
-      if (!ModelClass) {
-        alert('Tipo de modelo no reconocido.');
-        return;
-      }
+  addModel(modelType, params) {
+    const ModelClass = this.availableModels[modelType];
+    if (!ModelClass) {
+      console.error('Model not found:', modelType);
+      console.error('Available models:', Object.keys(this.availableModels));
+      console.error('MM1KModel type:', typeof MM1KModel);
+      alert(`Tipo de modelo no reconocido: ${modelType}\nVerifica la consola para más detalles.`);
+      return;
+    }
   
       const model = new ModelClass(params);
   
