@@ -5,6 +5,8 @@ class MetricsCalculator {
     switch(modelType) {
       case 'MM1':
         return this.calculateMM1(params);
+      case 'MM1K':
+        return this.calculateMM1K(params);
       case 'MMs':
         return this.calculateMMs(params);
       case 'MMsK':
@@ -29,6 +31,62 @@ class MetricsCalculator {
       W: 1 / (mu - lambda),
       Wq: rho / (mu - lambda),
       P0: 1 - rho
+    };
+  }
+
+  static calculateMM1K(params) {
+    const { lambda, mu, capacity } = params;
+    const K = capacity;
+    const rho = lambda / mu;
+
+    // Special case: rho = 1
+    if (Math.abs(rho - 1) < 1e-10) {
+      const P0 = 1 / (K + 1);
+      const L = K / 2;
+      const Lq = (K * (K - 1)) / (2 * (K + 1));
+      const lambda_eff = mu * (1 - P0);
+      const W = L / lambda_eff;
+      const Wq = Lq / lambda_eff;
+      const P_blocking = P0;
+
+      return {
+        rho: lambda_eff / mu,
+        L,
+        Lq,
+        W,
+        Wq,
+        P0,
+        P_blocking,
+        lambda_eff
+      };
+    }
+
+    // General case: rho ≠ 1
+    const P0 = (1 - rho) / (1 - Math.pow(rho, K + 1));
+    const P_blocking = P0 * Math.pow(rho, K);
+    const lambda_eff = lambda * (1 - P_blocking);
+
+    // Average number in system
+    const numerator = rho * (1 - (K + 1) * Math.pow(rho, K) + K * Math.pow(rho, K + 1));
+    const denominator = (1 - rho) * (1 - Math.pow(rho, K + 1));
+    const L = numerator / denominator;
+
+    // Average number in queue
+    const Lq = L - (1 - P0);
+
+    // Average times using Little's Law
+    const W = L / lambda_eff;
+    const Wq = Lq / lambda_eff;
+
+    return {
+      rho: lambda_eff / mu,
+      L,
+      Lq,
+      W,
+      Wq,
+      P0,
+      P_blocking,
+      lambda_eff
     };
   }
 

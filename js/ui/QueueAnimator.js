@@ -16,6 +16,8 @@ class QueueAnimator {
 
   getLayoutForModel() {
     switch(this.modelType) {
+      case 'MM1K':
+        return this.getMM1KLayout();
       case 'MMsK':
         return this.getMMsKLayout();
       case 'MMsN':
@@ -57,6 +59,61 @@ class QueueAnimator {
         </div>
 
         <!-- Server -->
+        <div class="servers-area grid gap-3 mb-4" 
+             id="servers-${this.modelName}">
+        </div>
+
+        <!-- Statistics Bar -->
+        <div class="stats-bar flex justify-between items-center text-xs p-2 bg-[#F5F0E8] rounded">
+          <span class="text-gray-600">
+            Atendidos: <span id="served-${this.modelName}" class="font-bold text-[#5A7F5F]">0</span>
+          </span>
+        </div>
+      </div>
+    `;
+  }
+
+  getMM1KLayout() {
+    return `
+      <div class="queue-visualizer border rounded-lg p-4 bg-gray-50">
+        <div class="model-badge">M/M/1/K - Un Servidor, Capacidad Limitada</div>
+        
+        <!-- Capacity Meter -->
+        <div class="capacity-meter">
+          <div id="meter-fill-${this.modelName}" class="meter-fill" style="width: 0%"></div>
+          <span class="capacity-label" id="capacity-label-${this.modelName}">0/K</span>
+        </div>
+
+        <!-- Rejection Zone -->
+        <div id="rejection-zone-${this.modelName}" class="rejection-zone hidden">
+          ⚠️ Rechazados: <span id="rejected-${this.modelName}">0</span>
+        </div>
+        
+        <!-- Arrival Zone -->
+        <div class="arrival-zone flex items-center gap-3 mb-4">
+          <span class="text-sm font-semibold text-gray-700">Llegadas (λ)</span>
+          <div id="arrival-animation-${this.modelName}" 
+               class="w-8 h-8 rounded-full bg-[#C2794D] 
+                      transition-all duration-500 opacity-0 flex items-center justify-center">
+            <span class="text-white text-xs">→</span>
+          </div>
+        </div>
+
+        <!-- Queue Area -->
+        <div class="queue-area border-2 border-dashed border-[#8B5A3C] rounded-lg p-3 mb-4 bg-white">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-gray-600">Cola de Espera</span>
+            <span class="text-xs text-gray-500">
+              En cola: <span id="queue-count-${this.modelName}" class="font-bold text-[#C2794D]">0</span>
+            </span>
+          </div>
+          <div id="queue-${this.modelName}" 
+               class="flex gap-2 flex-wrap min-h-[40px]">
+          </div>
+        </div>
+
+        <!-- Single Server -->
+        <div class="text-xs font-semibold text-gray-600 mb-2">Servidor</div>
         <div class="servers-area grid gap-3 mb-4" 
              id="servers-${this.modelName}">
         </div>
@@ -238,7 +295,7 @@ class QueueAnimator {
     this.updateServers(state);
 
     // Model-specific updates
-    if (this.modelType === 'MMsK') {
+    if (this.modelType === 'MM1K' || this.modelType === 'MMsK') {
       this.updateCapacityMeter(state.totalInSystem, state.capacity);
       if (state.rejected > 0) {
         const rejectionZone = document.getElementById(`rejection-zone-${this.modelName}`);

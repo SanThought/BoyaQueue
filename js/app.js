@@ -23,6 +23,7 @@ class BoyaqueueApp {
     registerModels() {
       this.availableModels = {
         'MM1': MM1Model,
+        'MM1K': MM1KModel,
         'MMs': MMsModel,
         'MMsK': MMsKModel,
         'MMsN': MMsNModel
@@ -72,7 +73,7 @@ class BoyaqueueApp {
         serversContainer.classList.remove('hidden');
       }
   
-      if (modelType === 'MMsK') {
+      if (modelType === 'MM1K' || modelType === 'MMsK') {
         capacityContainer.classList.remove('hidden');
       }
   
@@ -105,11 +106,11 @@ class BoyaqueueApp {
       // Build params object
       const params = { lambda, mu };
   
-      if (modelType !== 'MM1') {
+      if (modelType !== 'MM1' && modelType !== 'MM1K') {
         params.servers = parseInt(document.getElementById('param-servers').value) || 2;
       }
   
-      if (modelType === 'MMsK') {
+      if (modelType === 'MM1K' || modelType === 'MMsK') {
         params.capacity = parseInt(document.getElementById('param-capacity').value) || 10;
       }
   
@@ -316,11 +317,12 @@ class BoyaqueueApp {
     }
 
     getModelType(modelName) {
-      // Determine model type from name
-      if (modelName.includes('M/M/1')) return 'MM1';
+      // Determine model type from name (order matters - check specific before general)
+      if (modelName.includes('M/M/1/K')) return 'MM1K';
       if (modelName.includes('M/M/s/K')) return 'MMsK';
       if (modelName.includes('M/M/s/N')) return 'MMsN';
       if (modelName.includes('M/M/s')) return 'MMs';
+      if (modelName.includes('M/M/1')) return 'MM1';
       return 'MM1'; // Default fallback
     }
   

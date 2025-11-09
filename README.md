@@ -7,7 +7,7 @@ BoyaQueue es un simulador interactivo de última generación para el análisis c
 ## ✨ Características
 
 ### 🎯 Características Core
-- ✅ **Múltiples modelos**: M/M/1, M/M/s, M/M/s/K, M/M/s/N
+- ✅ **Múltiples modelos**: M/M/1, M/M/1/K, M/M/s, M/M/s/K, M/M/s/N
 - 🎬 **Animación en tiempo real** de llegadas, colas y servicios
 - 📊 **Comparación simultánea** de hasta 4 modelos
 - 📈 **Visualizaciones gráficas** interactivas con Chart.js
@@ -92,7 +92,7 @@ Luego abre: `http://localhost:8000`
 | **P₀** | Probabilidad de sistema vacío | Observado o aproximado |
 | **Cola máx** | Máxima longitud de cola observada | Tracking durante simulación |
 | **Atendidos** | Total de clientes servidos | Contador de salidas |
-| **Rechazados** | Clientes rechazados | Solo M/M/s/K |
+| **Rechazados** | Clientes rechazados | Solo M/M/1/K y M/M/s/K |
 
 ⭐ = Mejora v1.1: Cálculo más preciso usando integración temporal
 
@@ -103,6 +103,13 @@ Luego abre: `http://localhost:8000`
 - Capacidad infinita
 - Población infinita
 - **Condición de estabilidad**: λ < μ
+
+### M/M/1/K
+- Un servidor
+- Capacidad limitada (K)
+- Los clientes son rechazados si el sistema está lleno
+- **No requiere condición de estabilidad**
+- Visualización con medidor de capacidad
 
 ### M/M/s
 - Múltiples servidores (s)
@@ -150,6 +157,7 @@ BoyaQueue/
     ├── models/
     │   ├── QueueModel.js            # Clase base (refinada) ⭐
     │   ├── MM1.js                   # M/M/1 (refinado) ⭐
+    │   ├── MM1K.js                  # M/M/1/K (nuevo) ⭐ NEW
     │   ├── MMs.js                   # M/M/s (refinado) ⭐
     │   ├── MMsK.js                  # M/M/s/K (refinado) ⭐
     │   └── MMsN.js                  # M/M/s/N (refinado) ⭐
