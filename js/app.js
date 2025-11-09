@@ -304,9 +304,24 @@ class BoyaqueueApp {
         `;
         container.appendChild(animatorDiv);
   
-        const animator = new QueueAnimator(`animator-content-${index}`, `${model.name}-${index}`);
+        // Pass model type to animator
+        const modelType = this.getModelType(model.name);
+        const animator = new QueueAnimator(
+          `animator-content-${index}`, 
+          `${model.name}-${index}`,
+          modelType
+        );
         this.animators.push(animator);
       });
+    }
+
+    getModelType(modelName) {
+      // Determine model type from name
+      if (modelName.includes('M/M/1')) return 'MM1';
+      if (modelName.includes('M/M/s/K')) return 'MMsK';
+      if (modelName.includes('M/M/s/N')) return 'MMsN';
+      if (modelName.includes('M/M/s')) return 'MMs';
+      return 'MM1'; // Default fallback
     }
   
     async runSimulation(duration) {

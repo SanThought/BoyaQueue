@@ -38,8 +38,17 @@ class SimulationEngine {
 
       // Process event based on type
       if (event.type === 'arrival') {
+        const previousRejected = this.model.state.rejected || 0;
         this.model.handleArrival(event);
-        this.animator.animateArrival();
+        
+        // Check if customer was rejected (for capacity-limited models)
+        if (this.model.state.rejected > previousRejected) {
+          if (this.animator.animateRejection) {
+            this.animator.animateRejection();
+          }
+        } else {
+          this.animator.animateArrival();
+        }
 
         // Schedule next arrival if within duration
         if (event.time < duration) {

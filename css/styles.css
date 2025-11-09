@@ -60,15 +60,55 @@
       opacity: 0.5;
     }
   }
+
+  /* Customer movement animations */
+  @keyframes move-to-queue {
+    from { transform: translateX(0); opacity: 0.8; }
+    to { transform: translateX(100px); opacity: 1; }
+  }
+  
+  @keyframes move-to-server {
+    from { transform: translate(0, 0); }
+    to { transform: translate(150px, 0); }
+  }
+  
+  @keyframes bounce-rejection {
+    0% { transform: translateX(0) scale(1); opacity: 1; }
+    30% { transform: translateX(40px) scale(1.3); }
+    60% { transform: translateX(-20px) scale(0.8); }
+    100% { transform: translateX(-100px) scale(0); opacity: 0; }
+  }
+  
+  @keyframes cycle-return {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+    100% { transform: translateY(0) translateX(-250px); }
+  }
+  
+  @keyframes pulse-select {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
   
   .customer-token {
     animation: pulse-slow 2s ease-in-out infinite;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
   }
   
   .customer-token:hover {
     transform: scale(1.2);
     z-index: 10;
+  }
+
+  .customer-token.moving {
+    z-index: 15;
+    transform: scale(1.2);
+    animation: none;
+  }
+
+  .customer-token.rejected {
+    animation: bounce-rejection 0.8s ease-out forwards;
   }
   
   /* Smooth transitions */
@@ -84,6 +124,121 @@
   .server-slot:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .server-slot.selected {
+    animation: pulse-select 0.5s ease;
+    border-color: var(--boyaca-green);
+    box-shadow: 0 0 15px rgba(90, 127, 95, 0.5);
+  }
+
+  /* Model identification badges */
+  .model-badge {
+    background: var(--clay-terracotta);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  /* Capacity meter for M/M/s/K */
+  .capacity-meter {
+    background: var(--fique-beige);
+    border-radius: 1rem;
+    height: 2rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 2px solid var(--earth-brown);
+  }
+
+  .meter-fill {
+    background: linear-gradient(90deg, var(--boyaca-green), var(--mountain-green));
+    height: 100%;
+    transition: width 0.5s ease, background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .meter-fill.warning {
+    background: linear-gradient(90deg, var(--warm-sand), #D4A850);
+  }
+
+  .meter-fill.critical {
+    background: linear-gradient(90deg, var(--error-red), #9A3F3C);
+  }
+
+  .capacity-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Population pool for M/M/s/N */
+  .population-pool {
+    background: var(--fique-straw);
+    border: 2px solid var(--earth-brown);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .population-pool-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .pool-tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    min-height: 2rem;
+  }
+
+  .pool-token {
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--mountain-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    color: white;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+  }
+
+  .pool-token:hover {
+    transform: scale(1.15);
+  }
+
+  /* Rejection zone styling */
+  .rejection-zone {
+    background: rgba(184, 84, 80, 0.1);
+    border: 2px dashed var(--error-red);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--error-red);
+    font-weight: 600;
   }
   
   /* Progress bar animation - Boyacá colors */
