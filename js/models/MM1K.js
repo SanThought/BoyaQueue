@@ -7,7 +7,6 @@ class MM1KModel extends QueueModel {
   constructor(params) {
     super('M/M/1/K', params);
     this.params.servers = 1;
-    this.state.capacity = params.capacity;
   }
 
   validateParams() {
@@ -28,7 +27,7 @@ class MM1KModel extends QueueModel {
     this.state.arrivals++;
 
     // Check if system is at capacity (including server)
-    if (this.state.totalInSystem >= this.state.capacity) {
+    if (this.state.totalInSystem >= this.params.capacity) {
       // Customer is rejected (blocking)
       this.state.rejected++;
       return;

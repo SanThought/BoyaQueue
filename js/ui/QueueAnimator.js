@@ -271,7 +271,10 @@ class QueueAnimator {
     `;
   }
 
-  update(state) {
+  update(state, params = {}) {
+    // Store params for use in other methods
+    this.currentParams = params;
+    
     // Update queue visualization
     const queueContainer = document.getElementById(`queue-${this.modelName}`);
     if (queueContainer) {
@@ -296,7 +299,7 @@ class QueueAnimator {
 
     // Model-specific updates
     if (this.modelType === 'MM1K' || this.modelType === 'MMsK') {
-      this.updateCapacityMeter(state.totalInSystem, state.capacity);
+      this.updateCapacityMeter(state.totalInSystem, params.capacity);
       if (state.rejected > 0) {
         const rejectionZone = document.getElementById(`rejection-zone-${this.modelName}`);
         if (rejectionZone) {
@@ -308,7 +311,7 @@ class QueueAnimator {
     }
 
     if (this.modelType === 'MMsN') {
-      this.updatePopulationPool(state.customersOutside || 0, state.population || 0);
+      this.updatePopulationPool(state.customersOutside || 0, params.population || 0);
       const inSystem = document.getElementById(`in-system-${this.modelName}`);
       if (inSystem) inSystem.textContent = state.totalInSystem;
     }
@@ -319,9 +322,10 @@ class QueueAnimator {
     if (!serversContainer) return;
 
     serversContainer.innerHTML = '';
-    const totalServers = state.totalServers || state.servers || 1;
-    const busyCount = state.busyServers ? state.busyServers.length : 
-                      (state.serversOccupied || 0);
+    const totalServers = (this.currentParams && this.currentParams.servers) || 1;
+    const busyCount = (state.busyServers && state.busyServers.length > 0) 
+                      ? state.busyServers.length 
+                      : (state.serversOccupied || 0);
 
     for (let i = 0; i < totalServers; i++) {
       const isOccupied = i < busyCount;

@@ -1,370 +1,806 @@
-/* css/styles.css */
+/* css/styles.css - Polished Version v1.3 */
 
-/* Boyacá Color Palette - CSS Custom Properties */
+/* ==========================================
+   LOGO & BRANDING
+   ========================================== */
+
+.header-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.header-logo:hover {
+  transform: rotate(360deg) scale(1.1);
+}
+
+/* For larger logo images */
+@media (min-width: 768px) {
+  .header-logo {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ==========================================
+   TYPOGRAPHY SYSTEM
+   ========================================== */
+
+/* Base Typography */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headers with Fraunces */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 600; }
+h3 { font-size: 1.5rem; font-weight: 600; }
+h4 { font-size: 1.25rem; font-weight: 500; }
+
+/* Emphasis and special text */
+.model-name, .emphasis {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Number formatting for metrics */
+.metric-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================
+   COLOR SYSTEM
+   ========================================== */
+
 :root {
+  /* Primary Boyacá Colors */
   --clay-terracotta: #C2794D;
   --clay-deep: #8B5A3C;
+  --clay-light: #D9956F;
+  
+  /* Neutrals */
   --fique-beige: #E8D5C4;
   --fique-straw: #D4C5A9;
+  --warm-sand: #C9B896;
+  --light-cream: #F5F0E8;
+  
+  /* Accents */
   --boyaca-green: #5A7F5F;
   --mountain-green: #748B75;
   --earth-brown: #6B4423;
-  --warm-sand: #C9B896;
-  --light-cream: #F5F0E8;
   --error-red: #B85450;
+  
+  /* Text */
   --text-primary: #3A2415;
   --text-secondary: #6B5A47;
+  --text-tertiary: #8C7A6B;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(59, 37, 21, 0.12);
+  --shadow-md: 0 4px 12px rgba(59, 37, 21, 0.15);
+  --shadow-lg: 0 8px 24px rgba(59, 37, 21, 0.20);
+  --shadow-xl: 0 16px 48px rgba(59, 37, 21, 0.25);
 }
 
-/* Enhanced hover lift for cards - GPU accelerated */
+/* ==========================================
+   CARD SYSTEM & ANIMATIONS
+   ========================================== */
+
+/* Card entry animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .card-lift {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
               box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  box-shadow: var(--shadow-sm);
 }
 
 .card-lift:hover {
-  transform: translateY(-4px) translateZ(0);
-  box-shadow: 0 8px 20px rgba(59, 37, 21, 0.15);
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: var(--shadow-md);
 }
 
-/* Button hover animations - GPU accelerated */
+/* Stagger animation for multiple cards */
+.card-lift:nth-child(1) { animation-delay: 0.05s; }
+.card-lift:nth-child(2) { animation-delay: 0.1s; }
+.card-lift:nth-child(3) { animation-delay: 0.15s; }
+.card-lift:nth-child(4) { animation-delay: 0.2s; }
+
+/* ==========================================
+   BUTTON SYSTEM & MICRO-INTERACTIONS
+   ========================================== */
+
 .btn-primary {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 4px rgba(59, 37, 21, 0.1);
-  will-change: transform;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-primary:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 4px 12px rgba(194, 121, 77, 0.3);
+  transform: translateY(-1px) scale(1.02) translateZ(0);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active {
-  transform: translateY(0) translateZ(0);
-  box-shadow: 0 2px 4px rgba(59, 37, 21, 0.1);
+  transform: translateY(0) scale(0.98) translateZ(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:disabled {
   transform: none;
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
-/* Custom animations */
+/* ==========================================
+   FORM INPUTS & VALIDATION
+   ========================================== */
+
+input[type="number"],
+input[type="text"],
+select {
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  border: 2px solid #E5E7EB;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--clay-terracotta);
+  box-shadow: 0 0 0 3px rgba(194, 121, 77, 0.1);
+  transform: translateY(-1px);
+}
+
+input:hover:not(:focus),
+select:hover:not(:focus) {
+  border-color: var(--clay-light);
+}
+
+/* Validation states */
+input.error {
+  border-color: var(--error-red);
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+input.success {
+  border-color: var(--boyaca-green);
+}
+
+/* Label animation */
+label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+input:focus + label,
+select:focus + label {
+  color: var(--clay-terracotta);
+}
+
+/* ==========================================
+   TABLE ENHANCEMENTS
+   ========================================== */
+
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.comparison-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(to bottom, var(--clay-terracotta), var(--clay-deep));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-table th {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  color: white;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.comparison-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--fique-beige);
+}
+
+/* Zebra striping */
+.comparison-table tbody tr:nth-child(even) {
+  background-color: rgba(232, 213, 196, 0.2);
+}
+
+.comparison-table tbody tr:hover {
+  background-color: rgba(232, 213, 196, 0.4);
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.comparison-table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.925rem;
+  transition: all 0.2s ease;
+}
+
+/* Number columns - right align */
+.comparison-table td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Highlighted cells */
+.comparison-table td.highlight {
+  background-color: rgba(194, 121, 77, 0.15);
+  font-weight: 600;
+  color: var(--clay-deep);
+}
+
+/* ==========================================
+   LOADING STATES
+   ========================================== */
+
+/* Elegant spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--fique-beige);
+  border-top: 4px solid var(--clay-terracotta);
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Progress bar with gradient */
+#progress-bar {
+  background: linear-gradient(
+    90deg,
+    var(--clay-terracotta) 0%,
+    var(--clay-light) 50%,
+    var(--clay-terracotta) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(194, 121, 77, 0.3);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Skeleton loading */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--fique-beige) 0%,
+    var(--fique-straw) 50%,
+    var(--fique-beige) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+/* ==========================================
+   QUEUE VISUALIZATION
+   ========================================== */
+
+/* Customer tokens */
 @keyframes pulse-slow {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
 
-  /* Customer movement animations */
-  @keyframes move-to-queue {
-    from { transform: translateX(0); opacity: 0.8; }
-    to { transform: translateX(100px); opacity: 1; }
-  }
-  
-  @keyframes move-to-server {
-    from { transform: translate(0, 0); }
-    to { transform: translate(150px, 0); }
-  }
-  
-  @keyframes bounce-rejection {
-    0% { transform: translateX(0) scale(1); opacity: 1; }
-    30% { transform: translateX(40px) scale(1.3); }
-    60% { transform: translateX(-20px) scale(0.8); }
-    100% { transform: translateX(-100px) scale(0); opacity: 0; }
-  }
-  
-  @keyframes cycle-return {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-30px); }
-    100% { transform: translateY(0) translateX(-250px); }
-  }
-  
-  @keyframes pulse-select {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-  }
-  
-  .customer-token {
-    animation: pulse-slow 2s ease-in-out infinite;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-  }
-  
-  .customer-token:hover {
-    transform: scale(1.2);
-    z-index: 10;
-  }
+.customer-token {
+  animation: pulse-slow 2s ease-in-out infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
 
-  .customer-token.moving {
-    z-index: 15;
-    transform: scale(1.2);
-    animation: none;
-  }
+.customer-token:hover {
+  transform: scale(1.15) translateZ(0);
+  z-index: 10;
+  animation: none;
+}
 
-  .customer-token.rejected {
-    animation: bounce-rejection 0.8s ease-out forwards;
-  }
-  
-  /* Smooth transitions */
-  .queue-visualizer > * {
-    transition: all 0.3s ease;
-  }
-  
-  /* Server status colors */
-  .server-slot {
-    transition: all 0.3s ease;
-  }
-  
-  .server-slot:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+.customer-token.moving {
+  z-index: 15;
+  transform: scale(1.2) translateZ(0);
+  animation: none;
+}
 
-  .server-slot.selected {
-    animation: pulse-select 0.5s ease;
-    border-color: var(--boyaca-green);
-    box-shadow: 0 0 15px rgba(90, 127, 95, 0.5);
-  }
+/* Rejection animation */
+@keyframes bounce-rejection {
+  0% { transform: translateX(0) scale(1); opacity: 1; }
+  30% { transform: translateX(40px) scale(1.3); }
+  60% { transform: translateX(-20px) scale(0.8); }
+  100% { transform: translateX(-100px) scale(0); opacity: 0; }
+}
 
-  /* Model identification badges */
-  .model-badge {
-    background: var(--clay-terracotta);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-    display: inline-block;
-  }
+.customer-token.rejected {
+  animation: bounce-rejection 0.8s ease-out forwards;
+}
 
-  /* Capacity meter for M/M/s/K */
-  .capacity-meter {
-    background: var(--fique-beige);
-    border-radius: 1rem;
-    height: 2rem;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 1rem;
-    border: 2px solid var(--earth-brown);
-  }
+/* Server slots */
+.server-slot {
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
 
-  .meter-fill {
-    background: linear-gradient(90deg, var(--boyaca-green), var(--mountain-green));
-    height: 100%;
-    transition: width 0.5s ease, background 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
+.server-slot:hover {
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: var(--shadow-md);
+}
 
-  .meter-fill.warning {
-    background: linear-gradient(90deg, var(--warm-sand), #D4A850);
-  }
+@keyframes pulse-select {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
 
-  .meter-fill.critical {
-    background: linear-gradient(90deg, var(--error-red), #9A3F3C);
-  }
+.server-slot.selected {
+  animation: pulse-select 0.5s ease;
+  border-color: var(--boyaca-green);
+  box-shadow: 0 0 20px rgba(90, 127, 95, 0.5);
+}
 
-  .capacity-label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    z-index: 2;
-    pointer-events: none;
-  }
+/* Model badges */
+.model-badge {
+  background: linear-gradient(135deg, var(--clay-terracotta), var(--clay-deep));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+}
 
-  /* Population pool for M/M/s/N */
-  .population-pool {
-    background: var(--fique-straw);
-    border: 2px solid var(--earth-brown);
-    border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
+/* ==========================================
+   MODEL-SPECIFIC FEATURES
+   ========================================== */
 
-  .population-pool-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-  }
+/* Capacity meter for M/M/s/K */
+.capacity-meter {
+  background: var(--fique-beige);
+  border-radius: 1rem;
+  height: 2rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 2px solid var(--earth-brown);
+}
 
-  .pool-tokens {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    min-height: 2rem;
-  }
+.meter-fill {
+  background: linear-gradient(90deg, var(--boyaca-green), var(--mountain-green));
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-  .pool-token {
-    width: 1.5rem;
-    height: 1.5rem;
-    background: var(--mountain-green);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.625rem;
-    color: white;
-    font-weight: 600;
-    transition: transform 0.2s ease;
-  }
+.meter-fill.warning {
+  background: linear-gradient(90deg, var(--warm-sand), #D4A850);
+}
 
-  .pool-token:hover {
-    transform: scale(1.15);
-  }
+.meter-fill.critical {
+  background: linear-gradient(90deg, var(--error-red), #9A3F3C);
+}
 
-  /* Rejection zone styling */
-  .rejection-zone {
-    background: rgba(184, 84, 80, 0.1);
-    border: 2px dashed var(--error-red);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    color: var(--error-red);
-    font-weight: 600;
-  }
-  
-  /* Progress bar animation - Boyacá colors */
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
-  }
-  
-  #progress-bar {
-    background: linear-gradient(
-      90deg,
-      var(--clay-terracotta) 0%,
-      var(--clay-deep) 50%,
-      var(--clay-terracotta) 100%
-    );
-    background-size: 1000px 100%;
-    animation: shimmer 2s infinite linear;
-  }
-  
-  /* Table highlighting - Boyacá fique beige */
-  .comparison-table tr:hover {
-    background-color: rgba(232, 213, 196, 0.3);
-  }
-  
-  /* Metric cards */
-  .metric-card {
-    transition: all 0.2s ease;
-  }
-  
-  .metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Responsive grid adjustments */
-  @media (max-width: 768px) {
-    .queue-visualizer {
-      font-size: 0.875rem;
-    }
-  
-    .customer-token {
-      width: 1.5rem;
-      height: 1.5rem;
-      font-size: 0.625rem;
-    }
-  
-    .server-icon {
-      font-size: 1.25rem;
-    }
-  }
-  
-  /* Print styles */
-  @media print {
-    header, #simulation-controls, #animation-section {
-      display: none;
-    }
-  
-    #results-section {
-      page-break-inside: avoid;
-    }
-  
-    .no-print {
-      display: none;
-    }
-  }
-  
-  /* Loading spinner - Boyacá clay color */
-  .spinner {
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    border-top: 3px solid var(--clay-terracotta);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  /* Tooltip styles */
-  .tooltip {
-    position: relative;
-  }
-  
-  .tooltip::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    white-space: nowrap;
+.capacity-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Population pool for M/M/s/N */
+.population-pool {
+  background: var(--fique-straw);
+  border: 2px solid var(--earth-brown);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.population-pool-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.pool-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  min-height: 2rem;
+}
+
+.pool-token {
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--mountain-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  color: white;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.pool-token:hover {
+  transform: scale(1.15) translateZ(0);
+}
+
+/* Rejection zone */
+.rejection-zone {
+  background: rgba(184, 84, 80, 0.1);
+  border: 2px dashed var(--error-red);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--error-red);
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==========================================
+   MODAL SYSTEM
+   ========================================== */
+
+/* Modal animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px) scale(0.95);
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
   }
-  
-  .tooltip:hover::after {
+  to {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
-  
-  /* Scrollbar styling - Boyacá earth tones */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+}
+
+#analytics-modal:not(.hidden) {
+  animation: fadeIn 0.3s ease-out;
+}
+
+#analytics-modal:not(.hidden) > div {
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Modal tabs */
+.modal-tab {
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  position: relative;
+}
+
+.modal-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--clay-terracotta);
+  transition: width 0.3s ease;
+}
+
+.modal-tab:hover::after {
+  width: 100%;
+}
+
+.modal-tab:hover {
+  color: var(--clay-terracotta);
+}
+
+.modal-tab.active-tab {
+  color: var(--clay-terracotta);
+  font-weight: 600;
+}
+
+.modal-tab.active-tab::after {
+  width: 100%;
+}
+
+/* ==========================================
+   FLOATING BUTTON
+   ========================================== */
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(194, 121, 77, 0.4);
+    transform: scale(1);
   }
-  
-  ::-webkit-scrollbar-track {
-    background: var(--fique-beige);
+  50% {
+    box-shadow: 0 12px 48px rgba(194, 121, 77, 0.6);
+    transform: scale(1.02);
   }
+}
+
+#open-analytics-btn {
+  animation: subtle-pulse 2s ease-in-out infinite;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  will-change: transform;
+}
+
+/* ==========================================
+   CONFIGURATION COLLAPSE
+   ========================================== */
+
+#configuration-section.collapsed {
+  padding: 1rem 1.5rem;
+}
+
+#configuration-section.collapsed #config-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+#config-content {
+  max-height: 2000px;
+  opacity: 1;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.4s ease;
+}
+
+/* ==========================================
+   SCROLLBAR STYLING
+   ========================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--fique-beige);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--earth-brown);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--clay-deep);
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.25rem; }
   
-  ::-webkit-scrollbar-thumb {
-    background: var(--earth-brown);
-    border-radius: 4px;
+  .queue-visualizer {
+    font-size: 0.875rem;
   }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--clay-deep);
+
+  .customer-token {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.625rem;
   }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  #analytics-modal > div {
+    max-height: 95vh;
+  }
+
+  .modal-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  #open-analytics-btn span:last-child {
+    display: none;
+  }
+
+  #open-analytics-btn {
+    padding: 1rem;
+    border-radius: 50%;
+  }
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+
+@media print {
+  header, #simulation-controls, #animation-section, #open-analytics-btn {
+    display: none;
+  }
+
+  #results-section {
+    page-break-inside: avoid;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  body {
+    font-size: 12pt;
+  }
+
+  .comparison-table {
+    font-size: 10pt;
+  }
+}
+
+/* ==========================================
+   UTILITY ANIMATIONS
+   ========================================== */
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Performance optimization */
+.card-lift,
+.btn-primary,
+.customer-token,
+.server-slot {
+  will-change: transform;
+}
+
+/* Accessibility: Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

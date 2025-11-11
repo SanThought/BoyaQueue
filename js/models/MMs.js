@@ -4,8 +4,6 @@
 class MMsModel extends QueueModel {
   constructor(params) {
     super('M/M/s', params);
-    // Store servers count in state for easy access
-    this.state.totalServers = params.servers;
   }
 
   validateParams() {
@@ -36,7 +34,7 @@ class MMsModel extends QueueModel {
     };
 
     // Check if any server is available
-    if (this.state.busyServers.length < this.state.totalServers) {
+    if (this.state.busyServers.length < this.params.servers) {
       this.startService(customer, event.time);
     } else {
       // All servers busy - add to queue

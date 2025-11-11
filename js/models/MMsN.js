@@ -4,8 +4,6 @@
 class MMsNModel extends QueueModel {
   constructor(params) {
     super('M/M/s/N', params);
-    this.state.totalServers = params.servers;
-    this.state.population = params.population;
     // All customers initially outside the system
     this.state.customersOutside = params.population;
   }
@@ -40,7 +38,7 @@ class MMsNModel extends QueueModel {
     };
 
     // Check if any server is available
-    if (this.state.busyServers.length < this.state.totalServers) {
+    if (this.state.busyServers.length < this.params.servers) {
       this.startService(customer, event.time);
     } else {
       // All servers busy - add to queue

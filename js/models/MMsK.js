@@ -4,8 +4,6 @@
 class MMsKModel extends QueueModel {
   constructor(params) {
     super('M/M/s/K', params);
-    this.state.totalServers = params.servers;
-    this.state.capacity = params.capacity;
   }
 
   validateParams() {
@@ -30,7 +28,7 @@ class MMsKModel extends QueueModel {
     this.state.arrivals++;
 
     // Check if system is at capacity
-    if (this.state.totalInSystem >= this.state.capacity) {
+    if (this.state.totalInSystem >= this.params.capacity) {
       // Customer is rejected (blocking)
       this.state.rejected++;
       return;
@@ -44,7 +42,7 @@ class MMsKModel extends QueueModel {
     };
 
     // Check if any server is available
-    if (this.state.busyServers.length < this.state.totalServers) {
+    if (this.state.busyServers.length < this.params.servers) {
       this.startService(customer, event.time);
     } else {
       // All servers busy - add to queue

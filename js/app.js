@@ -1,13 +1,14 @@
 // app.js - ENHANCED VERSION
 class BoyaqueueApp {
-    constructor() {
-      this.models = [];
-      this.animators = [];
-      this.isRunning = false;
-      this.simulationSpeed = 1;
-      this.maxModels = 4;
-      this.init();
-    }
+  constructor() {
+    this.models = [];
+    this.animators = [];
+    this.engines = []; // Store engines for time-series data
+    this.isRunning = false;
+    this.simulationSpeed = 1;
+    this.maxModels = 4;
+    this.init();
+  }
   
     init() {
       this.setupUI();
@@ -58,6 +59,40 @@ class BoyaqueueApp {
       // NUEVO: Reset all button
       document.getElementById('reset-all-btn').addEventListener('click', () => {
         this.resetAll();
+      });
+
+      // Analytics modal event listeners
+      document.getElementById('open-analytics-btn').addEventListener('click', () => {
+        this.openAnalyticsModal();
+      });
+
+      document.getElementById('close-modal-btn').addEventListener('click', () => {
+        this.closeAnalyticsModal();
+      });
+
+      document.getElementById('analytics-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'analytics-modal') {
+          this.closeAnalyticsModal();
+        }
+      });
+
+      // Modal tab switching
+      document.querySelectorAll('.modal-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          this.switchModalTab(e.target.dataset.tab);
+        });
+      });
+
+      // ESC key to close modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('analytics-modal').classList.contains('hidden')) {
+          this.closeAnalyticsModal();
+        }
+      });
+
+      // Input section collapse toggle
+      document.getElementById('toggle-config-btn').addEventListener('click', () => {
+        this.toggleConfigSection();
       });
     }
   
@@ -236,6 +271,8 @@ class BoyaqueueApp {
       // Clear all models and animators
       this.models = [];
       this.animators = [];
+      this.engines = [];
+      this.modalContentRendered = false;
       
       // Hide all sections
       document.getElementById('models-section').classList.add('hidden');
@@ -243,11 +280,16 @@ class BoyaqueueApp {
       document.getElementById('animation-section').classList.add('hidden');
       document.getElementById('results-section').classList.add('hidden');
       
+      // Hide floating button and modal
+      document.getElementById('open-analytics-btn').classList.add('hidden');
+      this.closeAnalyticsModal();
+      
       // Clear containers
       document.getElementById('models-list').innerHTML = '';
       document.getElementById('animators-container').innerHTML = '';
       document.getElementById('comparison-table-container').innerHTML = '';
-      document.getElementById('charts-container').innerHTML = '';
+      const modalChartsContainer = document.getElementById('modal-charts-container');
+      if (modalChartsContainer) modalChartsContainer.innerHTML = '';
       document.getElementById('conclusions-container').innerHTML = '';
       
       // Reset form
@@ -270,30 +312,31 @@ class BoyaqueueApp {
         return;
       }
   
+      // Auto-collapse config section
+      const configSection = document.getElementById('configuration-section');
+      if (!configSection.classList.contains('collapsed')) {
+        this.toggleConfigSection();
+      }
+
       // Show animation section
       this.setupAnimationContainers();
       document.getElementById('animation-section').classList.remove('hidden');
-  
+
       // Show progress
       document.getElementById('simulation-progress').classList.remove('hidden');
       document.getElementById('run-simulation-btn').disabled = true;
-      document.getElementById('run-simulation-btn').textContent = '⏳ Simulando...';
+      document.getElementById('run-simulation-btn').textContent = 'Simulando...';
   
       // Run simulation
       await this.runSimulation(duration);
   
-      // Hide progress, show results
+      // Hide progress, reset button
       document.getElementById('simulation-progress').classList.add('hidden');
       document.getElementById('run-simulation-btn').disabled = false;
-      document.getElementById('run-simulation-btn').textContent = '▶️ Ejecutar Simulación';
+      document.getElementById('run-simulation-btn').textContent = 'Ejecutar Simulación';
   
+      // Mark results as available (for state management)
       document.getElementById('results-section').classList.remove('hidden');
-  
-      // Scroll to results
-      document.getElementById('results-section').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
     }
   
     setupAnimationContainers() {
@@ -335,6 +378,8 @@ class BoyaqueueApp {
   
     async runSimulation(duration) {
       this.isRunning = true;
+      this.engines = []; // Reset engines array
+      this.modalContentRendered = false; // Reset modal content flag for new simulation
   
       // Reset all models
       this.models.forEach(model => {
@@ -355,7 +400,7 @@ class BoyaqueueApp {
   
       // Run all models simultaneously
       const simulationPromises = this.models.map((model, i) => 
-        this.runModelSimulation(model, this.animators[i], duration)
+        this.runModelSimulation(model, this.animators[i], duration, i)
       );
   
       await Promise.all(simulationPromises);
@@ -364,32 +409,33 @@ class BoyaqueueApp {
       this.isRunning = false;
     }
   
-    async runModelSimulation(model, animator, duration) {
+    async runModelSimulation(model, animator, duration, index) {
       const engine = new SimulationEngine(model, animator, this.simulationSpeed);
       await engine.run(duration);
+      this.engines[index] = engine; // Store engine for time-series access
     }
   
     displayResults() {
-      const modelsData = this.models.map(model => ({
+      const modelsData = this.models.map((model, index) => ({
         name: model.name,
         params: model.params,
-        metrics: model.calculateMetrics()
+        metrics: model.calculateMetrics(),
+        timeSeries: this.engines[index] ? this.engines[index].getTimeSeries() : { time: [], L: [], Lq: [], rho: [] }
       }));
   
-      // Render comparison table
-      const comparisonTable = new ComparisonTable('comparison-table-container');
-      comparisonTable.render(modelsData);
+      // Store modelsData for modal access
+      this.currentResultsData = modelsData;
   
-      // Render charts
-      const chartManager = new ChartManager('charts-container');
-      chartManager.renderComparison(modelsData);
-  
-      // Generate conclusions
-      const conclusionsGen = new ConclusionsGenerator('conclusions-container');
-      conclusionsGen.generate(modelsData);
+      // Show floating analytics button
+      document.getElementById('open-analytics-btn').classList.remove('hidden');
   
       // Enable export buttons
       this.enableExport(modelsData);
+
+      // Auto-open modal to show results
+      setTimeout(() => {
+        this.openAnalyticsModal();
+      }, 500); // Small delay for smooth transition
     }
   
     enableExport(modelsData) {
@@ -474,6 +520,77 @@ class BoyaqueueApp {
       }).catch(() => {
         alert('❌ Error al copiar. Intente nuevamente.');
       });
+    }
+
+    // Modal control methods
+    openAnalyticsModal() {
+      const modal = document.getElementById('analytics-modal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+      
+      // Render all content in modal (table, charts, conclusions)
+      if (!this.modalContentRendered) {
+        // Render comparison table in modal
+        const comparisonTable = new ComparisonTable('comparison-table-container');
+        comparisonTable.render(this.currentResultsData);
+
+        // Render enhanced charts in modal
+        const chartManager = new ChartManager('modal-charts-container');
+        chartManager.renderAll(this.currentResultsData);
+
+        // Generate conclusions in modal
+        const conclusionsGen = new ConclusionsGenerator('conclusions-container');
+        conclusionsGen.generate(this.currentResultsData);
+
+        this.modalContentRendered = true;
+      }
+      
+      // Default to first tab (table)
+      this.switchModalTab('table');
+    }
+
+    closeAnalyticsModal() {
+      const modal = document.getElementById('analytics-modal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore scroll
+    }
+
+    switchModalTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.modal-tab').forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active-tab');
+          tab.classList.remove('text-gray-600');
+          tab.classList.add('text-[#C2794D]', 'border-b-2', 'border-[#C2794D]');
+        } else {
+          tab.classList.remove('active-tab', 'text-[#C2794D]', 'border-b-2', 'border-[#C2794D]');
+          tab.classList.add('text-gray-600');
+        }
+      });
+
+      // Show/hide tab content
+      document.querySelectorAll('.modal-tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      document.getElementById(`modal-tab-${tabName}`).classList.remove('hidden');
+    }
+
+    toggleConfigSection() {
+      const section = document.getElementById('configuration-section');
+      const content = document.getElementById('config-content');
+      const toggleBtn = document.getElementById('toggle-config-btn');
+      
+      if (section.classList.contains('collapsed')) {
+        // Expand
+        section.classList.remove('collapsed');
+        content.classList.remove('hidden');
+        toggleBtn.innerHTML = '▼ Ocultar';
+      } else {
+        // Collapse
+        section.classList.add('collapsed');
+        content.classList.add('hidden');
+        toggleBtn.innerHTML = '▶ Mostrar';
+      }
     }
   }
   

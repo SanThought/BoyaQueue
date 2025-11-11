@@ -29,31 +29,47 @@
     }
   </script>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=1.3">
 </head>
 <body class="bg-[#F5F0E8]">
 
   <!-- Header -->
   <header class="bg-gradient-to-r from-[#C2794D] to-[#8B5A3C] text-white shadow-lg">
     <div class="container mx-auto px-4 py-6">
-      <h1 class="text-3xl font-bold">🔄 BoyaQueue</h1>
-      <p class="text-[#F5F0E8] opacity-90 mt-1">
-        Simulador Comparativo de Teoría de Colas
-      </p>
+      <div class="flex items-center gap-3">
+        <img src="assets/images/logo.png" alt="BoyaQueue Logo" class="header-logo">
+        <div>
+          <h1 class="text-3xl font-bold">BoyaQueue</h1>
+          <p class="text-[#F5F0E8] opacity-90 text-sm mt-1">
+            Simulador Comparativo de Teoría de Colas
+          </p>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="container mx-auto px-4 py-8">
 
     <!-- Controls Section -->
-    <section class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
-      <h2 class="text-2xl font-bold mb-4 text-gray-800">
-        ⚙️ Configuración de Modelos
-      </h2>
+    <section id="configuration-section" class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift transition-all duration-300">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">
+          Configuración de Modelos
+        </h2>
+        <button id="toggle-config-btn" class="text-sm text-[#C2794D] hover:text-[#8B5A3C] font-medium transition-colors">
+          ▼ Ocultar
+        </button>
+      </div>
 
+      <div id="config-content" class="transition-all duration-300">
       <div class="grid md:grid-cols-2 gap-6">
 
         <!-- Model Selection -->
@@ -142,27 +158,26 @@
       <div class="mt-6 flex gap-3 flex-wrap">
         <button id="add-model-btn"
                 class="bg-[#C2794D] hover:bg-[#8B5A3C] text-white font-semibold 
-                       px-6 py-2 rounded-lg btn-primary
-                       flex items-center gap-2">
-          <span>➕</span> Agregar Modelo
+                       px-6 py-2 rounded-lg btn-primary">
+          Agregar Modelo
         </button>
         <button id="reset-all-btn"
                 class="bg-[#B85450] hover:bg-[#9A3F3C] text-white font-semibold 
-                       px-6 py-2 rounded-lg btn-primary
-                       flex items-center gap-2">
-          <span>🗑️</span> Limpiar Todo
+                       px-6 py-2 rounded-lg btn-primary">
+          Limpiar Todo
         </button>
         <span class="text-sm text-gray-500 self-center">
           (Máximo 4 modelos simultáneos)
         </span>
       </div>
+      </div><!-- /config-content -->
     </section>
 
     <!-- Added Models Display -->
     <section id="models-section" class="mb-8 hidden">
       <div class="bg-white rounded-lg shadow-md p-6 card-lift">
         <h3 class="text-xl font-bold mb-4 text-gray-800">
-          📋 Modelos Configurados
+          Modelos Configurados
         </h3>
         <div id="models-list" class="space-y-3">
           <!-- Dynamic model cards -->
@@ -173,7 +188,7 @@
     <!-- Simulation Controls -->
     <section id="simulation-controls" class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift hidden">
       <h3 class="text-xl font-bold mb-4 text-gray-800">
-        ▶️ Control de Simulación
+        Control de Simulación
       </h3>
 
       <div class="grid md:grid-cols-3 gap-4 mb-4">
@@ -206,7 +221,7 @@
           <button id="run-simulation-btn"
                   class="w-full bg-[#5A7F5F] hover:bg-[#748B75] text-white 
                          font-semibold px-6 py-2 rounded-lg btn-primary">
-            ▶️ Ejecutar Simulación
+            Ejecutar Simulación
           </button>
         </div>
       </div>
@@ -226,66 +241,15 @@
     <!-- Animation Containers -->
     <section id="animation-section" class="mb-8 hidden">
       <h2 class="text-2xl font-bold mb-4 text-gray-800">
-        🎬 Visualización en Tiempo Real
+        Visualización en Tiempo Real
       </h2>
       <div id="animators-container" class="grid md:grid-cols-2 gap-6">
         <!-- Dynamic animator containers -->
       </div>
     </section>
 
-    <!-- Results Section -->
-    <section id="results-section" class="hidden">
-
-      <!-- Comparison Table -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">
-            📊 Comparación de Resultados
-          </h2>
-          <div class="flex gap-2">
-            <button id="export-csv"
-                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
-                           px-4 py-2 rounded btn-primary">
-              📄 Exportar CSV
-            </button>
-            <button id="export-json"
-                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
-                           px-4 py-2 rounded btn-primary">
-              📋 Exportar JSON
-            </button>
-            <button id="copy-table"
-                    class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
-                           px-4 py-2 rounded btn-primary">
-              📑 Copiar Tabla
-            </button>
-          </div>
-        </div>
-        <div id="comparison-table-container">
-          <!-- Comparison table renders here -->
-        </div>
-      </div>
-
-      <!-- Charts -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8 card-lift">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">
-          📈 Gráficas Comparativas
-        </h2>
-        <div id="charts-container">
-          <!-- Charts render here -->
-        </div>
-      </div>
-
-      <!-- Conclusions Generator -->
-      <div class="bg-white rounded-lg shadow-md p-6 card-lift">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">
-          💡 Análisis y Conclusiones
-        </h2>
-        <div id="conclusions-container" class="space-y-4">
-          <!-- Auto-generated conclusions -->
-        </div>
-      </div>
-
-    </section>
+    <!-- Results Section - Hidden, used for state management only -->
+    <section id="results-section" class="hidden"></section>
 
   </div>
 
@@ -301,24 +265,105 @@
     </div>
   </footer>
 
+  <!-- Floating Analytics Button -->
+  <button id="open-analytics-btn" 
+          class="hidden fixed bottom-8 right-8 bg-[#C2794D] hover:bg-[#8B5A3C] text-white 
+                 font-semibold px-6 py-4 rounded-full shadow-2xl btn-primary z-40
+                 flex items-center gap-2 transition-transform hover:scale-110">
+    <span class="text-2xl">📊</span>
+    <span>Ver Análisis Completo</span>
+  </button>
+
+  <!-- Analytics Modal -->
+  <div id="analytics-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-[#C2794D] to-[#8B5A3C] text-white px-6 py-4 flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Análisis Completo de Resultados</h2>
+        <button id="close-modal-btn" class="text-white hover:text-gray-200 text-3xl font-bold transition-colors">
+          ×
+        </button>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="border-b border-gray-200 px-6 bg-gray-50">
+        <div class="flex gap-6">
+          <button class="modal-tab py-3 px-4 font-medium transition-colors" data-tab="table">
+            Tabla Comparativa
+          </button>
+          <button class="modal-tab py-3 px-4 font-medium transition-colors" data-tab="charts">
+            Gráficas
+          </button>
+          <button class="modal-tab py-3 px-4 font-medium transition-colors" data-tab="conclusions">
+            Conclusiones
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="flex-1 overflow-y-auto p-6">
+        <!-- Table Tab -->
+        <div id="modal-tab-table" class="modal-tab-content">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Comparación de Métricas</h3>
+            <div class="flex gap-2">
+              <button id="export-csv"
+                      class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                             px-4 py-2 rounded btn-primary">
+                Exportar CSV
+              </button>
+              <button id="export-json"
+                      class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                             px-4 py-2 rounded btn-primary">
+                Exportar JSON
+              </button>
+              <button id="copy-table"
+                      class="bg-[#748B75] hover:bg-[#5A7F5F] text-white text-sm 
+                             px-4 py-2 rounded btn-primary">
+                Copiar Tabla
+              </button>
+            </div>
+          </div>
+          <div id="comparison-table-container">
+            <!-- Comparison table renders here -->
+          </div>
+        </div>
+
+        <!-- Charts Tab -->
+        <div id="modal-tab-charts" class="modal-tab-content hidden">
+          <div id="modal-charts-container">
+            <!-- Enhanced charts will render here -->
+          </div>
+        </div>
+
+        <!-- Conclusions Tab -->
+        <div id="modal-tab-conclusions" class="modal-tab-content hidden">
+          <div id="conclusions-container" class="space-y-4">
+            <!-- Auto-generated conclusions render here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="js/core/RandomGenerators.js"></script>
-  <script src="js/core/PriorityQueue.js"></script>
-  <script src="js/core/MetricsCalculator.js"></script>
-  <script src="js/core/SimulationEngine.js"></script>
+  <script src="js/core/RandomGenerators.js?v=1.2"></script>
+  <script src="js/core/PriorityQueue.js?v=1.2"></script>
+  <script src="js/core/MetricsCalculator.js?v=1.2"></script>
+  <script src="js/core/SimulationEngine.js?v=1.2"></script>
 
-  <script src="js/models/QueueModel.js"></script>
-  <script src="js/models/MM1.js"></script>
-  <script src="js/models/MM1K.js"></script>
-  <script src="js/models/MMs.js"></script>
-  <script src="js/models/MMsK.js"></script>
-  <script src="js/models/MMsN.js"></script>
+  <script src="js/models/QueueModel.js?v=1.2"></script>
+  <script src="js/models/MM1.js?v=1.2"></script>
+  <script src="js/models/MM1K.js?v=1.2"></script>
+  <script src="js/models/MMs.js?v=1.2"></script>
+  <script src="js/models/MMsK.js?v=1.2"></script>
+  <script src="js/models/MMsN.js?v=1.2"></script>
 
-  <script src="js/ui/QueueAnimator.js"></script>
-  <script src="js/ui/ComparisonTable.js"></script>
-  <script src="js/ui/ChartManager.js"></script>
-  <script src="js/ui/ConclusionsGenerator.js"></script>
+  <script src="js/ui/QueueAnimator.js?v=1.2"></script>
+  <script src="js/ui/ComparisonTable.js?v=1.2"></script>
+  <script src="js/ui/ChartManager.js?v=1.2"></script>
+  <script src="js/ui/ConclusionsGenerator.js?v=1.2"></script>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=1.2"></script>
 </body>
 </html>
